@@ -1,0 +1,15 @@
+{
+  "name": "AKI暗記",
+  "short_name": "AKI暗記",
+  "description": "航空運航支援の用語を、定義一言一句で覚える個人用学習アプリ",
+  "lang": "ja",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#11151c",
+  "theme_color": "#11151c",
+  "icons": [
+    { "src": "apple-touch-icon.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
