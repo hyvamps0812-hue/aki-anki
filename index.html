@@ -138,7 +138,10 @@ body {
 .aki-tabbar {
   flex-shrink: 0;
   position: absolute; left: 0; right: 0; bottom: 0;
-  padding: 10px 14px calc(env(safe-area-inset-bottom, 0px) + 30px);
+  /* 下端: ホームインジケーターのセーフエリアを確保しつつ余白を抑える。
+     セーフエリア非対応端末(SE/PC)では floor 14px。
+     iPhone 16系(inset≈34px)では 34+6=40px ≒ 旧64pxから約24px縮小。 */
+  padding: 10px 14px max(calc(env(safe-area-inset-bottom, 0px) + 6px), 14px);
   display: flex; gap: 4px;
   background: color-mix(in oklab, var(--bg) 72%, transparent);
   backdrop-filter: blur(20px) saturate(140%);
