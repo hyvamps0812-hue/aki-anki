@@ -16,6 +16,15 @@
   if ('serviceWorker' in navigator && location.protocol === 'https:') {
     addEventListener('load', function () { navigator.serviceWorker.register('./sw.js'); });
   }
+  // 画面の実高さ(window.innerHeight)を CSS 変数に反映。iOS のアドレスバー有無でブレる
+  // dvh/vh を使わず、実測値で本体高さを合わせて下部の余白を出さない。
+  function setAppH() {
+    document.documentElement.style.setProperty('--app-h', window.innerHeight + 'px');
+  }
+  setAppH();
+  addEventListener('resize', setAppH);
+  addEventListener('orientationchange', setAppH);
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', setAppH);
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -23,16 +32,16 @@
 <style>
 /* ── base / layout ─────────────────────────────── */
 * { -webkit-tap-highlight-color: transparent; }
-/* iOS Safari 対策: body を「今見えている高さ」(100dvh) に固定し、ページ自体のスクロールを止める。
-   こうしないと body が height:100% = アドレスバー非表示時の大きい高さで確保され、
-   本体(100dvh) との差が下部の余白になり、スクロールでアドレスバーが引っ込むと埋まる、
-   というガタつきが出る。実スクロールは内側の .aki-screen だけが担当する。 */
-html, body { margin: 0; height: 100vh; height: 100dvh; overflow: hidden; overscroll-behavior: none; }
+/* iOS Safari 対策: 高さは JS が実測した「今見えている高さ」(--app-h = window.innerHeight) に
+   ピッタリ合わせる。dvh/vh はブラウザ実装差で大小がブレるため、実測値を正とする。
+   未対応時のフォールバックは 100dvh。ページ自体のスクロールは止め(overflow:hidden)、
+   実スクロールは内側の .aki-screen だけが担当する。 */
+html, body { margin: 0; height: var(--app-h, 100dvh); overflow: hidden; overscroll-behavior: none; }
 body {
   background: oklch(0.150 0.018 248);
   font-family: 'Noto Sans JP', system-ui, -apple-system, 'Hiragino Kaku Gothic ProN', sans-serif;
 }
-#root { height: 100vh; height: 100dvh; }
+#root { height: var(--app-h, 100dvh); }
 @media (min-width: 481px) {
   #root { display: flex; align-items: stretch; justify-content: center; }
 }
