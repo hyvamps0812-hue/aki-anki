@@ -16,15 +16,6 @@
   if ('serviceWorker' in navigator && location.protocol === 'https:') {
     addEventListener('load', function () { navigator.serviceWorker.register('./sw.js'); });
   }
-  // 画面の実高さ(window.innerHeight)を CSS 変数に反映。iOS のアドレスバー有無でブレる
-  // dvh/vh を使わず、実測値で本体高さを合わせて下部の余白を出さない。
-  function setAppH() {
-    document.documentElement.style.setProperty('--app-h', window.innerHeight + 'px');
-  }
-  setAppH();
-  addEventListener('resize', setAppH);
-  addEventListener('orientationchange', setAppH);
-  if (window.visualViewport) window.visualViewport.addEventListener('resize', setAppH);
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -32,16 +23,15 @@
 <style>
 /* ── base / layout ─────────────────────────────── */
 * { -webkit-tap-highlight-color: transparent; }
-/* iOS Safari 対策: 高さは JS が実測した「今見えている高さ」(--app-h = window.innerHeight) に
-   ピッタリ合わせる。dvh/vh はブラウザ実装差で大小がブレるため、実測値を正とする。
-   未対応時のフォールバックは 100dvh。ページ自体のスクロールは止め(overflow:hidden)、
-   実スクロールは内側の .aki-screen だけが担当する。 */
-html, body { margin: 0; height: var(--app-h, 100dvh); overflow: hidden; overscroll-behavior: none; }
+html, body { margin: 0; height: 100%; overflow: hidden; overscroll-behavior: none; }
 body {
-  background: oklch(0.150 0.018 248);
+  background: oklch(0.165 0.018 248);
   font-family: 'Noto Sans JP', system-ui, -apple-system, 'Hiragino Kaku Gothic ProN', sans-serif;
 }
-#root { height: var(--app-h, 100dvh); }
+/* 全画面を確実に覆う。standalone(viewport-fit=cover)では画面下のセーフエリア
+   (ホームバー領域)まで含めて画面いっぱいになり、タブバーの下に余白が出ない。
+   position:fixed + inset:0 は dvh/vh/innerHeight の実装差に影響されない。 */
+#root { position: fixed; inset: 0; }
 @media (min-width: 481px) {
   #root { display: flex; align-items: stretch; justify-content: center; }
 }
