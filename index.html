@@ -214,7 +214,10 @@ body {
 .aki-progress-track i.now { background: var(--text-dim); }
 
 /* ── deck (山札) ── */
-.aki-deck { position: relative; }
+/* 高さは画面高に追従。iPhone 14/15 以上(画面高>=752px相当)では上限の 408px。
+   iPhone SE / mini など低い画面では縮め、評価ボタンを折り返さず収める。
+   定義本文はカード内 (.aki-back-body) が内部スクロールするので可読性は保たれる。 */
+.aki-deck { position: relative; height: 408px; height: clamp(280px, calc(100dvh - 344px), 408px); }
 .aki-deck-ghost {
   position: absolute; inset: 0; border-radius: 26px;
   background: var(--surface); border: 1px solid var(--line);
@@ -398,7 +401,8 @@ body {
 }
 .aki-searchbar input {
   flex: 1; background: none; border: none; outline: none;
-  font-family: inherit; font-size: 15px; color: var(--text);
+  /* 16px 未満は iOS Safari がフォーカス時に自動ズームするため不可 */
+  font-family: inherit; font-size: 16px; color: var(--text);
 }
 .aki-searchbar input::placeholder { color: var(--text-mute); }
 .aki-filter-row { display: flex; gap: 7px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 6px; }
@@ -572,7 +576,8 @@ body {
 }
 .aki-switch.on i { transform: translateX(18px); }
 .aki-keyinput {
-  font-family: 'DM Mono', monospace; font-size: 14px; letter-spacing: .1em;
+  /* 16px 未満は iOS Safari がフォーカス時に自動ズームするため不可 */
+  font-family: 'DM Mono', monospace; font-size: 16px; letter-spacing: .06em;
   color: var(--text-dim); background: var(--bg); border: 1px solid var(--line);
   border-radius: 10px; padding: 9px 12px; flex: 1; min-width: 0;
 }
@@ -1191,7 +1196,7 @@ function studyScreen() {
     var id = S.session[0]; var t = id ? S.getTerm(id) : null;
     if (!t) { deckHolder.appendChild(completionEl()); return; }
     if (S.studyMode === 'read') {
-      var deck = h('div', { class: 'aki-deck', style: { height: '408px' } });
+      var deck = h('div', { class: 'aki-deck' });
       if (S.session.length > 2) deck.appendChild(h('div', { class: 'aki-deck-ghost g2' }));
       if (S.session.length > 1) deck.appendChild(h('div', { class: 'aki-deck-ghost g1' }));
       var turn = h('div', { class: 'aki-turn' });
