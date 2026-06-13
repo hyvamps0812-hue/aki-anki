@@ -23,12 +23,16 @@
 <style>
 /* ── base / layout ─────────────────────────────── */
 * { -webkit-tap-highlight-color: transparent; }
-html, body { margin: 0; height: 100%; }
+/* iOS Safari 対策: body を「今見えている高さ」(100dvh) に固定し、ページ自体のスクロールを止める。
+   こうしないと body が height:100% = アドレスバー非表示時の大きい高さで確保され、
+   本体(100dvh) との差が下部の余白になり、スクロールでアドレスバーが引っ込むと埋まる、
+   というガタつきが出る。実スクロールは内側の .aki-screen だけが担当する。 */
+html, body { margin: 0; height: 100vh; height: 100dvh; overflow: hidden; overscroll-behavior: none; }
 body {
   background: oklch(0.150 0.018 248);
   font-family: 'Noto Sans JP', system-ui, -apple-system, 'Hiragino Kaku Gothic ProN', sans-serif;
 }
-#root { height: 100dvh; }
+#root { height: 100vh; height: 100dvh; }
 @media (min-width: 481px) {
   #root { display: flex; align-items: stretch; justify-content: center; }
 }
