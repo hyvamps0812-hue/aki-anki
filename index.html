@@ -16,6 +16,22 @@
   if ('serviceWorker' in navigator && location.protocol === 'https:') {
     addEventListener('load', function () { navigator.serviceWorker.register('./sw.js'); });
   }
+  // ▼▼ 一時計測（高さ確定用・確定でき次第削除） ▼▼
+  addEventListener('load', function () {
+    try {
+      function u(unit){var d=document.createElement('div');d.style.cssText='position:absolute;left:-9999px;top:0;width:1px;height:'+unit;document.body.appendChild(d);var h=Math.round(d.getBoundingClientRect().height);d.remove();return h;}
+      function sa(s){var d=document.createElement('div');d.style.cssText='position:fixed;left:-9999px;top:0;width:1px;height:env(safe-area-inset-'+s+',0px)';document.body.appendChild(d);var h=Math.round(d.getBoundingClientRect().height);d.remove();return h;}
+      var root=document.getElementById('root');
+      var d=document.createElement('div');
+      d.style.cssText='position:fixed;left:6px;top:96px;z-index:99999;font:11px/1.55 ui-monospace,monospace;background:rgba(0,0,0,.82);color:#5fe;padding:6px 9px;border-radius:7px;white-space:pre;pointer-events:none';
+      d.textContent='vh:'+u('100vh')+' dvh:'+u('100dvh')+'\nlvh:'+u('100lvh')+' svh:'+u('100svh')
+        +'\nih:'+window.innerHeight+' screen:'+screen.height
+        +'\nsaTop:'+sa('top')+' saBot:'+sa('bottom')
+        +'\nrootH:'+(root?root.clientHeight:'?')+' standalone:'+(navigator.standalone?'Y':'n');
+      document.body.appendChild(d);
+    } catch (e) {}
+  });
+  // ▲▲ 一時計測ここまで ▲▲
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -23,15 +39,14 @@
 <style>
 /* ── base / layout ─────────────────────────────── */
 * { -webkit-tap-highlight-color: transparent; }
-html, body { margin: 0; height: 100%; overflow: hidden; overscroll-behavior: none; }
+html, body { margin: 0; height: 100dvh; overflow: hidden; overscroll-behavior: none; }
 body {
   background: oklch(0.165 0.018 248);
   font-family: 'Noto Sans JP', system-ui, -apple-system, 'Hiragino Kaku Gothic ProN', sans-serif;
 }
-/* 全画面を確実に覆う。standalone(viewport-fit=cover)では画面下のセーフエリア
-   (ホームバー領域)まで含めて画面いっぱいになり、タブバーの下に余白が出ない。
-   position:fixed + inset:0 は dvh/vh/innerHeight の実装差に影響されない。 */
-#root { position: fixed; inset: 0; }
+/* standalone でアプリが画面いっぱい(縦852)まで届くよう、大きい方のビューポート高で
+   満たす。lvh=ツールバー無しの全画面高。未対応は dvh/vh にフォールバック。 */
+#root { height: 100vh; height: 100dvh; height: 100lvh; }
 @media (min-width: 481px) {
   #root { display: flex; align-items: stretch; justify-content: center; }
 }
